@@ -1,0 +1,147 @@
+## Tutorial para ejecutar el proyecto
+
+### Paso 1: Configurar el entorno
+
+Primero, necesitas crear un entorno virtual y instalar las dependencias:
+
+```bash
+# Crear upython -m venv venvn entorno virtual
+
+
+# Activar el entorno virtual
+# En Windows:
+venv\Scripts\activate
+
+
+# Instalar las dependencias
+pip install -r requirements.txt
+```
+
+### Paso 2: Estructura del proyecto
+
+Asegúrate de que la estructura de carpetas sea la siguiente:
+
+```
+rpg_mission_system/
+├── app/
+│   ├── __init__.py
+│   ├── database.py
+│   ├── main.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── character.py
+│   │   ├── character_mission.py
+│   │   └── mission.py
+│   ├── routers/
+│   │   ├── __init__.py
+│   │   ├── characters.py
+│   │   └── missions.py
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   ├── character.py
+│   │   └── mission.py
+│   └── tda/
+│       ├── __init__.py
+│       └── queue.py
+├── tests/
+│   ├── test_api.py
+│   └── test_queue.py
+└── requirements.txt
+```
+
+### Paso 3: Iniciar el servidor
+
+Una vez que tengas todo configurado, puedes iniciar el servidor FastAPI con Uvicorn:
+
+```bash
+# Desde la carpeta principal del proyecto
+cd rpg_mission_system
+uvicorn app.main:app --reload
+```
+
+El servidor debería iniciarse en `http://127.0.0.1:8000`.
+Swanger---
+http://127.0.0.1:8000/docs
+
+
+### Paso 4: Probar la funcionalidad
+
+Vamos a probar todas las funcionalidades de la API usando la documentación Swagger o con herramientas como curl o Postman:
+
+#### 1. Crear un personaje:
+
+```http
+POST /personajes/
+
+{
+  "name": "Aventurero",
+  "level": 1,
+  "experience": 0
+}
+```
+
+#### 2. Crear misiones:
+
+```http
+POST /misiones/
+
+{
+  "title": "Derrota a 5 slimes",
+  "description": "Busca y elimina 5 slimes del bosque",
+  "xp_reward": 100,
+  "difficulty": 2
+}
+```
+
+```http
+POST /misiones/
+
+{
+  "title": "Recoge 3 hierbas medicinales",
+  "description": "Recolecta hierbas medicinales de la montaña",
+  "xp_reward": 50,
+  "difficulty": 1
+}
+```
+
+#### 3. Aceptar misiones para un personaje:
+
+Si creaste un personaje con ID 1 y misiones con IDs 1 y 2:
+
+```http
+POST /personajes/1/misiones/1
+```
+
+```http
+POST /personajes/1/misiones/2
+```
+
+#### 4. Ver las misiones de un personaje:
+
+```http
+GET /personajes/1/misiones
+```
+
+Esto mostrará las misiones en el orden de la cola (FIFO).
+
+#### 5. Completar la primera misión:
+
+```http
+POST /personajes/1/completar
+```
+
+#### 6. Verificar que la misión se completó y el personaje ganó XP:
+
+```http
+GET /personajes/1
+```
+
+
+### Paso 5: Ejecutar pruebas
+
+El proyecto incluye pruebas unitarias y de integración:
+
+```bash
+# Ejecutar todas las pruebas
+
+pytest rpg_mission_system/app/tests
